@@ -23,12 +23,14 @@ fn main() {
 
 fn check_guess(guess: u32, secret: u32) -> &'static str {
     if guess > secret {
+        // return "Too high!"; // This is correct but verbose
         "Too high!"
     } else if guess < secret {
         "Too low!"
     } else {
-        "Correct!" // Better to use an enum instead
+        "Correct!"
     }
+    // Note: Would be better to use an enum instead
 }
 
 // Example Output:
