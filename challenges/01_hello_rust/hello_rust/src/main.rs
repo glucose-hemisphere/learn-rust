@@ -1,6 +1,6 @@
 fn main() {
     // let name= "Alice"; // This would also work, due to type inference
-    let name= "Alice";
+    let name = "Alice";
     let age: u8 = 30;
     let mut count: u32 = 0;
     count += 1;
