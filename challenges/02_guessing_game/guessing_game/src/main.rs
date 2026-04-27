@@ -27,6 +27,25 @@ fn check_guess(guess: u32, secret: u32) -> &'static str {
     } else if guess < secret {
         "Too low!"
     } else {
-        "Correct!" // TODO: use an enum instead
+        "Correct!" // Better to use an enum instead
     }
 }
+
+// Example Output:
+//
+// 50
+// Too low!
+// 75
+// Too high!
+// 57
+// Too low!
+// 61
+// Too low!
+// 68
+// Too high!
+// 64
+// Too high!
+// 63
+// Too high!
+// 62
+// Correct! You got it in 8 guess(es).
