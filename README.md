@@ -19,6 +19,6 @@ If you'd like to use this repo to learn Rust for yourself, I'd suggest that you 
 
 ## Challenges
 
-The [plan](challenges/plan.md) is to do 18 challenges. Here are the ones that I've added and completed so far (click to go to the challenge description):
+The [plan](challenges/plan.md) is to do **18** challenges. Here are the ones that I've added and completed so far (click to go to the challenge description):
 
-1. [`hello-cargo`](challenges/01_hello-cargo/hello-cargo.md)
+1. [`hello-cargo`](challenges/01/hello-cargo.md)
