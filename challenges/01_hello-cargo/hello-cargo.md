@@ -65,7 +65,10 @@ A **workspace** is a collection of related packages that share a single `Cargo.l
 ```toml
 [workspace]
 resolver = "3"
-members = ["my-app", "my-lib"]
+members = [
+  "my-app",
+  "my-lib",
+]
 ```
 
 You will create a workspace once at the start of this challenge, then add a new package for each subsequent challenge.
@@ -142,22 +145,46 @@ This task is composed of **8** subtasks.
 
 ### 1 — Set up the workspace and the package
 
-Create an empty directory to be the root of your workspace, e.g. `rust-by-challenge/`.
-Inside it, create a file named `Cargo.toml` with these exact contents:
+To create a nested directory structure, run:
+
+```sh
+mkdir -p rust-by-challenge/challenges/01
+```
+
+To change into the `rust-by-challenge/` directory, which will be the root of your workspace, run:
+
+```sh
+cd rust-by-challenge
+```
+
+Create a file in the workspace root named `Cargo.toml` with these exact contents:
 
    ```toml
    [workspace]
    resolver = "3"
-   members = ["hello-cargo"]
+   members = ["challenges/01/hello-cargo"]
    ```
 
 From the workspace root, run:
 
    ```sh
-   cargo new hello-cargo
+   cargo new challenges/01/hello-cargo
    ```
 
-   This creates the `hello-cargo/` directory containing a fresh package with its own `Cargo.toml` and `src/main.rs`.
+This creates the `hello-cargo/` directory containing a fresh package with its own `Cargo.toml` and `src/main.rs`.
+
+The directory structure should now be:
+
+```sh
+rust-by-challenge
+├── Cargo.toml
+└── challenges
+    └── 01
+        └── hello-cargo
+            ├── Cargo.toml
+            └── src
+                └── main.rs
+```
 
 Run:
 
