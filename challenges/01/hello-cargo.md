@@ -176,13 +176,13 @@ This creates the `hello-cargo/` directory containing a fresh package with its ow
 The directory structure should now be:
 
 ```sh
-rust-by-challenge
+rust-by-challenge/
 ├── Cargo.toml
-└── challenges
-    └── 01
-        └── hello-cargo
+└── challenges/
+    └── 01/
+        └── hello-cargo/
             ├── Cargo.toml
-            └── src
+            └── src/
                 └── main.rs
 ```
 
