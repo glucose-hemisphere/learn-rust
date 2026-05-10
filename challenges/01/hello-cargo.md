@@ -210,12 +210,10 @@ Replace the body of `main()` so that running the program prints exactly:
 
 ### 3 — Print the venue using positional arguments
 
-Below the header line, add code that defines two variables and one `println!` call:
+Below the header line, add code that defines two variables:
 
-```rust
-let city = "London";
-let venue = "Barbican Centre";
-```
+- `city` with value `"London"`
+- `venue` with value `"Barbican Centre"`
 
 Use `println!` with a format string containing the positional placeholders `{1}` and `{0}`, passing `city` first and `venue` second, so that the output line is exactly:
 
@@ -225,20 +223,11 @@ Venue: Barbican Centre, London
 
 (The point of this subtask is to use positional indices — the obvious "just pass them in the right order" solution doesn't count.)
 
-After this subtask the full output should be:
-
-```sh
-=== Concert Ticket ===
-Venue: Barbican Centre, London
-```
-
 ### 4 — Print the artist using a named argument
 
-Below the venue line, define:
+Below the venue line, define the variable:
 
-```rust
-let artist = "London Symphony Orchestra";
-```
+- `artist` with value `"London Symphony Orchestra"`
 
 Then use `println!` with the placeholder `{artist}` (no extra positional argument) to print:
 
@@ -246,21 +235,11 @@ Then use `println!` with the placeholder `{artist}` (no extra positional argumen
 Artist: London Symphony Orchestra
 ```
 
-After this subtask the full output should be:
-
-```sh
-=== Concert Ticket ===
-Venue: Barbican Centre, London
-Artist: London Symphony Orchestra
-```
-
 ### 5 — Print the price with two decimal places
 
-Below the artist line, define a price:
+Below the artist line, define the variable:
 
-```rust
-let price = 34.5;
-```
+- `price` with value `34.5`
 
 Print it so the output line is exactly:
 
@@ -270,22 +249,11 @@ Price: £34.50
 
 The number must be formatted using a precision specifier so that it always shows exactly two digits after the decimal point — typing `34.50` as a literal in the format string does not count.
 
-After this subtask the full output should be:
-
-```sh
-=== Concert Ticket ===
-Venue: Barbican Centre, London
-Artist: London Symphony Orchestra
-Price: £34.50
-```
-
 ### 6 — Print a right-aligned seat label
 
-Below the price line, define:
+Below the price line, define the variable:
 
-```rust
-let seat = "A12";
-```
+- `seat` with value `"A12"`
 
 Print it using a width-and-alignment specifier so the seat value is right-aligned within a field of width 10. The output line must be exactly:
 
@@ -296,14 +264,6 @@ Seat:        A12
 (That is: the literal `Seat:`, one space, then exactly 7 spaces of padding, then `A12`.)
 
 After this subtask the full output should be:
-
-```sh
-=== Concert Ticket ===
-Venue: Barbican Centre, London
-Artist: London Symphony Orchestra
-Price: £34.50
-Seat:        A12
-```
 
 ### 7 — Build a footer with `format!`
 
