@@ -3,7 +3,7 @@
 - [Challenge 02: `variables-and-types`](#challenge-02-variables-and-types)
   - [Theory](#theory)
     - [Variables with `let`](#variables-with-let)
-    - [Primitive types](#primitive-types)
+    - [Primitive scalar types](#primitive-scalar-types)
     - [Type inference and annotations](#type-inference-and-annotations)
     - [Numeric literals](#numeric-literals)
     - [Mutability with `mut`](#mutability-with-mut)
@@ -46,19 +46,17 @@ Immutability by default is a deliberate design choice — when you read a variab
 
 Rust supports the usual arithmetic operators on numbers — `+`, `-`, `*`, `/`, and `%` (remainder) — so you can write expressions like `let total = count + 1;`.
 
-### Primitive types
+### Primitive scalar types
 
-Rust has a small fixed set of built-in **primitive** (or **scalar**) types:
+Rust has a small fixed set of built-in **primitive** **scalar** types:
 
-| Category          | Types                                          | Notes                                                       |
-| ----------------- | ---------------------------------------------- | ----------------------------------------------------------- |
-| Signed integers   | `i8`, `i16`, `i32`, `i64`, `i128`, `isize`     | The number is the width in bits; `isize` is a machine word. |
-| Unsigned integers | `u8`, `u16`, `u32`, `u64`, `u128`, `usize`     | Same idea, but holds non-negative values only.              |
-| Floating-point    | `f32`, `f64`                                   | IEEE 754 single and double precision.                       |
-| Boolean           | `bool`                                         | Exactly `true` or `false`.                                  |
-| Character         | `char`                                         | A single Unicode scalar value (4 bytes wide).               |
-
-So `u8` holds values from 0 to 255, `i32` holds roughly ±2 billion, and `f64` is a double-precision floating-point number.
+| Category          | Types                                      | Notes                                                                                    |
+| ----------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Signed integers   | `i8`, `i16`, `i32`, `i64`, `i128`, `isize` | The number is how many bits are used to represent the integer; `isize` is pointer-sized. |
+| Unsigned integers | `u8`, `u16`, `u32`, `u64`, `u128`, `usize` | Same idea, but holds non-negative values only.                                           |
+| Floating-point    | `f32`, `f64`                               | Single and double precision floats.                                                      |
+| Boolean           | `bool`                                     | Exactly `true` or `false`.                                                               |
+| Character         | `char`                                     | A single Unicode scalar value (4 bytes wide).                                            |
 
 A `bool` is exactly `true` or `false`:
 
@@ -69,7 +67,7 @@ let ready = true;
 A `char` is **not** a single byte — it is a 4-byte Unicode scalar value, written with single quotes (double quotes would make a string instead):
 
 ```rust
-let letter = 'Z';
+let letter = 'A';
 let symbol = '€';
 let glyph  = '中';
 ```
@@ -87,12 +85,13 @@ let yes    = true;   // inferred as bool
 When inference isn't enough, or when you want to be explicit about the type, you can add an **annotation** with `: Type` after the name:
 
 ```rust
-let small: u8  = 200;
-let big:   i64 = 9_000_000_000;
-let exact: f32 = 1.5;
+let small:          u8  = 200;
+let big_positive:   i64 = 2_000_000_000;
+let big_negative:   i64 = -2_000_000_000;
+let exact:          f32 = 1.5;
 ```
 
-Note that the "default" types (`i32`, `f64`) only apply when nothing else fixes the type. In `let small: u8 = 200;` the literal `200` is taken as a `u8` because the annotation requires it — there is no inference fallback to `i32`.
+Note that the "default" types (`i32`, `f64`) only apply when nothing else fixes the type. For example, in `let small: u8 = 200;` the literal `200` is taken as a `u8` because the annotation requires it — there is no inference fallback to `i32`.
 
 ### Numeric literals
 
@@ -105,12 +104,19 @@ let oct = 0o77;          // octal       (decimal value: 63)
 let bin = 0b1111_0000;   // binary      (decimal value: 240)
 ```
 
-Underscores can appear anywhere inside the digits and are ignored by the compiler — they exist purely to make long numbers readable.
+Underscores can appear anywhere inside the digits and are ignored by the compiler — they exist purely to make long numbers readable. Similarly, the literal forms only affect how the source code reads, not the runtime value:
+
+```rust
+println!("{dec}"); // Output: 1000000
+println!("{hex}"); // Output: 255
+println!("{oct}"); // Output: 63
+println!("{bin}"); // Output: 240
+```
 
 You can also append a **type suffix** directly to a literal to fix its type at the source:
 
 ```rust
-let a = 5_u8;     // a is u8
+let a = 5u8;      // a is u8
 let b = 1.5_f32;  // b is f32
 ```
 
@@ -155,7 +161,7 @@ A `const` is a compile-time constant: a fixed value baked into the program. By c
 
 ```rust
 const SECONDS_PER_MINUTE: u32 = 60;
-const PI: f64 = 3.141_592_653_589_793;
+const PI: f64 = 3.141592653589793;
 ```
 
 A `const` differs from a `let` binding in three ways:
@@ -182,7 +188,7 @@ A **tuple** groups a fixed number of values, possibly of different types, into o
 
 ```rust
 let triple: (i32, i32, i32) = (3, 4, 5);
-let mixed = (42, 3.14, true, 'Z');  // type is (i32, f64, bool, char)
+let mixed = (42, 3.14, true, 'x');  // type is inferred as (i32, f64, bool, char)
 ```
 
 Once a tuple is created, its length and the type at each position are fixed.
@@ -190,8 +196,10 @@ Once a tuple is created, its length and the type at each position are fixed.
 You access individual fields by position with `.0`, `.1`, `.2`, and so on:
 
 ```rust
-println!("first: {}", triple.0);
-println!("last:  {}", triple.2);
+println!("first:  {}", mixed.0); // 42
+println!("second: {}", mixed.1); // 3.14
+println!("third:  {}", mixed.2); // true
+println!("last:   {}", mixed.3); // 'x'
 ```
 
 You can also **destructure** a tuple by writing a matching pattern on the left of `let`:
@@ -199,6 +207,7 @@ You can also **destructure** a tuple by writing a matching pattern on the left o
 ```rust
 let (a, b, c) = triple;
 println!("{a} {b} {c}");
+// Output: 3 4 5
 ```
 
 ### Fixed-size arrays
@@ -242,7 +251,13 @@ From the workspace root (`rust-by-challenge/`), make the directory for this chal
 mkdir -p challenges/02
 ```
 
-Edit the workspace's `Cargo.toml` so its `members` list includes the new package:
+Then create the package itself:
+
+```sh
+cargo new challenges/02/variables-and-types
+```
+
+This will automatically add the new package to the `members` list of the workspace's `Cargo.toml`:
 
 ```toml
 [workspace]
@@ -253,12 +268,6 @@ members = [
 ]
 ```
 
-Then create the package itself:
-
-```sh
-cargo new challenges/02/variables-and-types
-```
-
 The directory structure should now look like:
 
 ```sh
@@ -267,6 +276,9 @@ rust-by-challenge/
 └── challenges/
     ├── 01/
     │   └── hello-cargo/
+    │       ├── Cargo.toml
+    │       └── src/
+    │           └── main.rs
     └── 02/
         └── variables-and-types/
             ├── Cargo.toml
@@ -288,14 +300,12 @@ Hello, world!
 
 ### 2 — Print a header and two typed bindings
 
-Replace the body of `main` so the program declares two annotated, immutable variables:
+Replace the body of `main` so the program declares two *annotated*, *immutable* variables:
 
-```rust
-let temperature_c: f64 = 18.5;
-let humidity: u8 = 67;
-```
+- `temperature_c` of type `f64` with value `18.5`
+- `humidity` of type `u8` with value `67`
 
-Then print a header line followed by these two values. The output must be exactly:
+Print a header line followed by these two values. The output must be exactly:
 
 ```sh
 === Daily Weather Summary ===
@@ -305,95 +315,54 @@ Humidity: 67%
 
 ### 3 — Add a `bool` and a `char`
 
-Below the previous bindings, add:
+Below the previous bindings, define the *unannotated*, *immutable* variables:
 
-```rust
-let is_raining: bool = true;
-let wind_direction: char = 'N';
-```
+- `is_raining` of type `bool` with value `true`
+- `wind_direction` of type `char` with value `N`
 
-Print them on two new lines. After this subtask the full output should be:
+Print them on two new lines:
 
 ```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
 Raining: true
 Wind direction: N
 ```
 
 ### 4 — Use `mut` to update a reading
 
-Below the previous bindings, declare a *mutable* wind speed:
+Below the previous bindings, initialise a *mutable* wind speed variable:
 
-```rust
-let mut wind_speed_kmh = 8;
-```
+- `wind_speed_kmh` with value `8`
 
-Print a line showing the morning reading. Then **reassign** `wind_speed_kmh` to `15` (no second `let` — that would be shadowing, not mutation), and print a second line showing the evening reading. The full output must be exactly:
+Print a line showing the morning reading. Then **reassign** `wind_speed_kmh` to `15` (no second `let` — that would be shadowing, not mutation), and print a second line showing the evening reading:
 
 ```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
-Raining: true
-Wind direction: N
 Wind speed (morning): 8 km/h
 Wind speed (evening): 15 km/h
 ```
 
 ### 5 — Use shadowing to refine a value
 
-Below the previous code, add an uncalibrated pressure reading in hectopascals (hPa):
+Below the previous code, add an uncalibrated pressure reading in hectopascals (hPa) by defining the *immutable* variable:
 
-```rust
-let pressure = 1013;
-```
+- `pressure` with value `1013`
 
-Now apply a calibration offset of `-5` by **shadowing** `pressure` with a fresh `let` that uses the old value to compute the new one:
+Now apply a calibration offset of `-5` (i.e. subtract `5`) by **shadowing** `pressure` using the old value to compute the new one.
 
-```rust
-let pressure = pressure - 5;
-```
-
-Note that `pressure` is *not* declared `mut` — each `let` creates a brand-new immutable binding. Print the calibrated reading. After this subtask the full output should be:
+Print the calibrated reading:
 
 ```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
-Raining: true
-Wind direction: N
-Wind speed (morning): 8 km/h
-Wind speed (evening): 15 km/h
 Pressure (calibrated): 1008 hPa
 ```
 
 ### 6 — Use a `const`
 
-At the **top of the file**, before `fn main()`, declare a constant for the maximum possible humidity:
+At the **top of the file**, before `fn main()`, define a *constant* for the maximum possible humidity:
 
-```rust
-const MAX_HUMIDITY: u8 = 100;
-```
+- `MAX_HUMIDITY` of type `u8` with value `100`
 
-Inside `main`, after the previous code, compute the headroom as `MAX_HUMIDITY - humidity` and print it (the value must be computed, not typed as a literal). The new line must be exactly:
+Inside `main`, after the previous code, compute the headroom as `humidity` subtracted from `MAX_HUMIDITY` and print it (the value must be computed, not typed as a literal). The new line must be exactly:
 
 ```sh
-Humidity headroom: 33%
-```
-
-After this subtask the full output should be:
-
-```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
-Raining: true
-Wind direction: N
-Wind speed (morning): 8 km/h
-Wind speed (evening): 15 km/h
-Pressure (calibrated): 1008 hPa
 Humidity headroom: 33%
 ```
 
@@ -401,34 +370,13 @@ Humidity headroom: 33%
 
 Below the previous code, add three bindings, each using a **different literal form**:
 
-```rust
-let sensor_id: u32 = 0xFF_AA_01;       // hexadecimal
-let alert_mask: u8 = 0b1010_1010;       // binary
-let pressure_pa: u32 = 101_325;         // decimal with underscore separators
-```
+- `sensor_id` of type `u32` with value `0xFF_AA_01`
+- `alert_mask` of type `u8` with value `0b1010_1010`
+- `pressure_pa` of type `u32` with value `101_325`
 
 Print them so that the new lines are exactly:
 
 ```sh
-Sensor ID:    16755201
-Alert mask:   170
-Pressure raw: 101325 Pa
-```
-
-(Notice that all three print as ordinary decimal numbers — the literal form only affects how the source code reads, not the runtime value.)
-
-After this subtask the full output should be:
-
-```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
-Raining: true
-Wind direction: N
-Wind speed (morning): 8 km/h
-Wind speed (evening): 15 km/h
-Pressure (calibrated): 1008 hPa
-Humidity headroom: 33%
 Sensor ID:    16755201
 Alert mask:   170
 Pressure raw: 101325 Pa
@@ -448,36 +396,15 @@ Rounded temperature: 18°C
 Humidity as float: 67.0
 ```
 
-For the float, use the `{:.1}` precision specifier (introduced in Challenge 1) to force one decimal place — without it, an `f64` value with no fractional part is printed without a decimal point at all, so `67.0_f64` would display as just `67`.
-
-After this subtask the full output should be:
-
-```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
-Raining: true
-Wind direction: N
-Wind speed (morning): 8 km/h
-Wind speed (evening): 15 km/h
-Pressure (calibrated): 1008 hPa
-Humidity headroom: 33%
-Sensor ID:    16755201
-Alert mask:   170
-Pressure raw: 101325 Pa
-Rounded temperature: 18°C
-Humidity as float: 67.0
-```
+For the float, use the appropriate precision specifier to force one decimal place.
 
 ### 9 — A tuple for coordinates
 
 Below the previous code, define an annotated tuple of two `f64` values:
 
-```rust
-let coordinates: (f64, f64) = (51.501, -0.142);
-```
+- `coordinates` with values `51.501` and `-0.142`
 
-Use **tuple indexing** (`.0` and `.1`, not destructuring) to print the latitude and longitude on separate lines. The new lines must be exactly:
+Use **tuple indexing** (not destructuring) to print the latitude and longitude on separate lines. The new lines must be exactly:
 
 ```sh
 Latitude:  51.501
@@ -486,40 +413,15 @@ Longitude: -0.142
 
 (Note the two spaces after `Latitude:` so the values line up under each other.)
 
-After this subtask the full output should be:
-
-```sh
-=== Daily Weather Summary ===
-Temperature: 18.5°C
-Humidity: 67%
-Raining: true
-Wind direction: N
-Wind speed (morning): 8 km/h
-Wind speed (evening): 15 km/h
-Pressure (calibrated): 1008 hPa
-Humidity headroom: 33%
-Sensor ID:    16755201
-Alert mask:   170
-Pressure raw: 101325 Pa
-Rounded temperature: 18°C
-Humidity as float: 67.0
-Latitude:  51.501
-Longitude: -0.142
-```
-
 ### 10 — A fixed-size array of readings
 
-Below the previous code, define an annotated array of five recent temperature readings:
-
-```rust
-let recent_temperatures: [f64; 5] = [16.2, 17.1, 18.5, 19.0, 18.4];
-```
+Below the previous code, define an annotated array of five recent temperature readings called `recent_temperatures` of type `f64` with the values `16.2`, `17.1`, `18.5`, `19.0`, and `18.4`.
 
 Print three new lines:
 
-1. The total number of readings, obtained by calling `len()` on the array (do **not** type the literal `5`).
-2. The first reading, accessed by index `[0]`.
-3. The last reading, accessed by index `[4]`.
+1. The total number of readings based on the length of the array.
+2. The first reading.
+3. The last reading.
 
 The new lines must be exactly:
 
@@ -531,7 +433,7 @@ Last reading:  18.4°C
 
 (Note the two spaces after `Last reading:` so the temperatures line up under each other.)
 
-After this final subtask the complete output of the program should be:
+After this final subtask, the complete output of the program should be:
 
 ```sh
 === Daily Weather Summary ===
